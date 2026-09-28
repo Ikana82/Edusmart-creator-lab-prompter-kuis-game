@@ -33,6 +33,10 @@ export const translations = {
     topicPlaceholder: 'Contoh: Gaya Magnet IPAS Kelas 4 SD',
     subTopicLabel: 'Rincian Materi / Konsep Kunci (Opsional):',
     subTopicPlaceholder: 'Contoh: Sifat kutub utara & selatan, benda magnetis, sifat tarik-menarik',
+    uploadMaterialBtn: 'Upload File Materi',
+    uploadMaterialHint: 'Format: .txt, .md, .docx, file teks',
+    clearSubTopic: 'Hapus rincian materi',
+    fileLoaded: 'File berhasil dimuat',
 
     section3Title: 'Peserta Didik & Tujuan Pembelajaran',
     section3Desc: 'Parameter ini membantu AI menyesuaikan bahasa, tingkat berpikir, dan tingkat kesulitan.',
@@ -115,6 +119,10 @@ export const translations = {
     topicPlaceholder: 'e.g. Magnetic Forces Science Grade 4',
     subTopicLabel: 'Subtopics / Key Concepts (Optional):',
     subTopicPlaceholder: 'e.g. North and south poles, magnetic materials, attraction and repulsion',
+    uploadMaterialBtn: 'Upload Material File',
+    uploadMaterialHint: 'Formats: .txt, .md, .docx, text files',
+    clearSubTopic: 'Clear subtopics',
+    fileLoaded: 'File loaded successfully',
 
     section3Title: 'Target Learners & Pedagogical Goals',
     section3Desc: 'These parameters help AI adapt language, thinking level, and difficulty.',

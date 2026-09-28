@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Search } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { X, Search, Upload, FileText } from 'lucide-react';
 import { Language } from '../types/generator';
 import { POPULAR_TOPICS, translations } from '../utils/translations';
 
@@ -20,6 +20,45 @@ export const TopicSection: React.FC<TopicSectionProps> = ({
 }) => {
   const t = translations[currentLang];
   const [topicSearch, setTopicSearch] = useState('');
+  const [uploadedFileName, setUploadedFileName] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        let content = (event.target?.result as string) || '';
+
+        // If docx or xml-based, strip obvious xml tags if present
+        if (file.name.endsWith('.docx') || file.name.endsWith('.doc')) {
+          content = content
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/[^\x20-\x7E\xA0-\xFF\n\r\t]/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        } else {
+          content = content.replace(/\r\n/g, '\n').trim();
+        }
+
+        if (content) {
+          const updated = subTopic.trim() ? `${subTopic.trim()}; ${content}` : content;
+          onChangeSubTopic(updated);
+          setUploadedFileName(file.name);
+        }
+      } catch (err) {
+        console.error('Failed to parse uploaded file content', err);
+      }
+    };
+
+    reader.onerror = (err) => {
+      console.error('File read error', err);
+    };
+
+    reader.readAsText(file);
+  };
 
   const filteredTopics = POPULAR_TOPICS.filter((item) =>
     item.topic.toLowerCase().includes(topicSearch.toLowerCase()) ||
@@ -140,17 +179,76 @@ export const TopicSection: React.FC<TopicSectionProps> = ({
         </div>
 
         {/* Subtopic / key concepts input */}
-        <div>
-          <label className="block text-xs font-semibold text-slate-600 mb-1.5">
-            {t.subTopicLabel}
-          </label>
-          <input
-            type="text"
-            value={subTopic}
-            onChange={(e) => onChangeSubTopic(e.target.value)}
-            placeholder={t.subTopicPlaceholder}
-            className="w-full px-4 py-2.5 text-xs sm:text-sm bg-white text-slate-800 placeholder:text-stone-400 border border-stone-200/90 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl outline-none transition-all"
-          />
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <label className="block text-xs font-semibold text-slate-600">
+              {t.subTopicLabel}
+            </label>
+            <div className="flex items-center gap-1.5">
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileUpload}
+                accept=".txt,.md,.markdown,.csv,.json,.doc,.docx,.pdf,.text"
+                className="hidden"
+                id="subtopic-file-upload"
+              />
+              <label
+                htmlFor="subtopic-file-upload"
+                className="cursor-pointer inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 hover:text-emerald-800 border border-emerald-300/80 active:scale-95 rounded-xl transition-all shadow-2xs"
+                title={t.uploadMaterialHint}
+              >
+                <Upload className="w-3.5 h-3.5 text-emerald-600" />
+                <span>{t.uploadMaterialBtn}</span>
+              </label>
+            </div>
+          </div>
+
+          <div className="relative">
+            <input
+              type="text"
+              value={subTopic}
+              onChange={(e) => onChangeSubTopic(e.target.value)}
+              placeholder={t.subTopicPlaceholder}
+              className="w-full pl-4 pr-10 py-2.5 text-xs sm:text-sm bg-white text-slate-800 placeholder:text-stone-400 border border-stone-200/90 focus:border-emerald-500 focus:ring-4 focus:ring-emerald-500/10 rounded-2xl outline-none transition-all shadow-2xs"
+            />
+            {subTopic && (
+              <button
+                type="button"
+                onClick={() => {
+                  onChangeSubTopic('');
+                  setUploadedFileName(null);
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-stone-200 hover:bg-stone-300 text-slate-600 flex items-center justify-center transition-colors"
+                title={t.clearSubTopic}
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          {uploadedFileName && (
+            <div className="flex items-center justify-between text-xs text-emerald-800 bg-emerald-50/90 border border-emerald-200/80 px-3 py-1.5 rounded-xl animate-in fade-in duration-200">
+              <span className="flex items-center gap-1.5 truncate">
+                <FileText className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <span className="truncate">
+                  {t.fileLoaded}: <strong className="font-semibold text-emerald-900">{uploadedFileName}</strong>
+                </span>
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setUploadedFileName(null);
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
+                className="text-stone-400 hover:text-stone-700 ml-2"
+                title="Tutup info file"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
