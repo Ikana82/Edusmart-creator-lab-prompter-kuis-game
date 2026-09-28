@@ -1,0 +1,7 @@
+{
+  "name": "AI Educational Game Generator",
+  "description": "Generator prompt terstruktur untuk membuat game dan kuis edukasi ramah anak dengan berbagai mekanik permainan dan target AI builder.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
