@@ -78,11 +78,28 @@ export function generateEducationalGamePrompt(data: GameFormData): string {
 
   // Sample dummy questions customized to the topic and grade
   const dummyQuestions = generateDummySample(data);
+  const brandName = data.brandName?.trim() || 'EduSmart Creator Lab';
+  const visualStyle = data.visualStyle?.trim() || '3D Felt Toys Pastel';
 
   return `# PROMPT SPESIFIKASI: GAME & KUIS EDUKASI INTERAKTIF RAMAH ANAK
 Target Builder: ${data.targetAI}
-Brand / Creator: ${data.brandName || 'EduSmart Creator Lab'}
+Brand / Creator: ${brandName}
 ${data.brandNotes ? `Catatan Branding: ${data.brandNotes}\n` : ''}Dibuat Melalui: AI Educational Game Generator
+
+---
+
+BRAND IDENTITY:
+Display the text "${brandName}" as a simple creator credit/badge.
+
+IMPORTANT:
+"${brandName}" is ONLY a text brand name.
+Do NOT search for, import, or use a Canva Brand Kit.
+Do NOT request a Brand Kit.
+Do NOT require a brand website.
+Do NOT automatically import logos, colors, fonts, or other brand assets.
+
+Use the visual style specified in this prompt:
+${visualStyle}, warm pastel colors, rounded UI, child-friendly typography.
 
 ---
 
@@ -170,8 +187,11 @@ ${JSON.stringify(dummyQuestions, null, 2)}
 
 ---
 
-## I. INSTRUKSI KHUSUS & BRANDING
-${data.brandNotes ? `- **Catatan Branding**: ${data.brandNotes}\n` : ''}${data.specialInstructions ? `- **Instruksi Khusus**: ${data.specialInstructions}\n` : ''}- Pastikan navigasi bebas hambatan, tidak ada tombol yang rusak atau tidak responsif, dan teks instruksi menggunakan kalimat positif yang mudah dipahami anak.
+## I. INSTRUKSI KHUSUS & BRAND IDENTITY
+- **Brand Credit**: Tampilkan teks "${brandName}" sebagai credit/badge kreator sederhana.
+- **PENTING (Tanpa Brand Kit/Website)**: "${brandName}" adalah nama merek teks murni. Jangan meminta/mencari Canva Brand Kit, website resmi, atau file logo eksternal. Gunakan aset visual bawaan styling prompt ini.
+- **Konsistensi Visual**: ${visualStyle}, warm pastel colors, rounded UI, child-friendly typography.
+${data.brandNotes ? `- **Catatan Branding Tambahan**: ${data.brandNotes}\n` : ''}${data.specialInstructions ? `- **Instruksi Khusus Tambahan**: ${data.specialInstructions}\n` : ''}- Pastikan navigasi bebas hambatan, tidak ada tombol yang rusak atau tidak responsif, dan teks instruksi menggunakan kalimat positif yang mudah dipahami anak.
 
 ---
 *Silakan buatkan kode aplikasi game edukasi ini secara lengkap, teruji, dan siap dijalankan sekarang juga!*`;
